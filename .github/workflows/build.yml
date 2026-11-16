@@ -9,7 +9,12 @@ jobs:
         with: {distribution: temurin, java-version: 17}
       - uses: gradle/actions/setup-gradle@v4
         with: {gradle-version: 8.9}
-      - run: unzip -q MacroHub.zip
-      - run: cd MacroHub && gradle assembleDebug --no-daemon
+      - name: Build
+        run: |
+          [ -f MacroHub.zip ] && unzip -q MacroHub.zip
+          cd "$(dirname "$(find . -name settings.gradle.kts | head -1)")"
+          gradle assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
-        with: {name: MacroHub-apk, path: MacroHub/app/build/outputs/apk/debug/app-debug.apk}
+        with:
+          name: MacroHub-apk
+          path: "**/outputs/apk/debug/*.apk"
